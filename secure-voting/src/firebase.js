@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, collection, addDoc  } from "firebase/firestore"; // import for collection and adding documents
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Storage functions
+import { getFirestore, collection, getDocs, addDoc  } from "firebase/firestore"; // import for collection and adding documents
 
 const firebaseConfig = {
   apiKey: "AIzaSyCQSJeXLlwqsU7dhFrXEc1g5c-CTzCoqio",
