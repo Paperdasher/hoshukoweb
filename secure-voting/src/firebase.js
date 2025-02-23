@@ -1,6 +1,6 @@
-// firebase.js
-import firebase from 'firebase/app';
-import 'firebase/firestore';  // Add other Firebase services you need
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCQSJeXLlwqsU7dhFrXEc1g5c-CTzCoqio",
@@ -12,5 +12,9 @@ const firebaseConfig = {
   measurementId: "G-RMR92X642Z"
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-export const db = firebaseApp.firestore();  // Example of exporting Firestore
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const db = getFirestore(app);
+
+export { auth, provider, db };
