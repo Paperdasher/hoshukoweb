@@ -29,20 +29,20 @@ function App() {
 
   return (
     <div>
-      <h1>Secure Voting App</h1>
+      <h1>生徒会選挙管理ページ</h1>
       
       {/* User Authentication */}
       {user ? (
         <div>
-          <p>Welcome, {user.displayName}</p>
-          <button onClick={logOut}>Log Out</button>
+          <p>こんにちは、 {user.displayName}</p>
+          <button onClick={logOut}>ログアウト</button>
           
           {/* Add Candidate Form and Candidates List for logged-in users */}
           <AddCandidate />
           <CandidatesList />
         </div>
       ) : (
-        <button onClick={signIn}>Sign in with Google</button>
+        <button onClick={signIn}>Googleでサインイン</button>
       )}
     </div>
   );
