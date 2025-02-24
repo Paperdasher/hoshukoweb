@@ -3,12 +3,22 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { auth, provider, db } from './firebase'; 
 import { collection, getDocs, addDoc, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
-import AddCandidate from './AddCandidate';  
-import CandidatesList from './CandidatesList';
-import VotingPage from './VotingPage';
-import CandidateApplication from './CandidateApplication';
-import AdminApproval from './AdminApproval';
-import './App.css'; // Ensure CSS is imported
+
+import HomePage from './pages/HomePage';
+import NewsPage from './pages/NewsPage';
+import SurveyPage from './pages/SurveyPage';
+import ContactPage from './pages/ContactPage';
+import StudentGovernmentPortal from './pages/StudentGovernmentPortal';
+
+import AddCandidate from './pages/election-portal/AddCandidate';
+import Voting from './pages/election-portal/Voting';
+import VotingPage from './pages/election-portal/VotingPage';
+import CandidateApplication from './pages/election-portal/CandidateApplication';
+import AdminApproval from './pages/election-portal/AdminApproval';
+import CandidatesList from './pages/election-portal/CandidatesList';
+
+
+import './App.css';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -23,7 +33,7 @@ function App() {
       const result = await signInWithPopup(auth, provider);
       setUser(result.user);
     } catch (error) {
-      console.log("Sign-in error:", error);
+      console.log("サインインエラー:", error);
     }
   };
 
@@ -33,7 +43,7 @@ function App() {
       setUser(null);
       setIsAuthorized(false);
     } catch (error) {
-      console.log("Log-out error:", error);
+      console.log("ログアウトエラー:", error);
     }
   };
 
@@ -56,53 +66,18 @@ function App() {
     setIsAuthorized(email === placeholderEmail || allowedEmails.includes(email));
   };
 
-  const handleAddEmail = async () => {
-    if (!newEmail) {
-      alert("メールアドレスを入力してください。");
-      return;
-    }
-
-    if (allowedEmails.includes(newEmail)) {
-      alert("このメールアドレスはすでに許可されています。");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "allowedEmails"), { email: newEmail });
-      setNewEmail('');
-    } catch (error) {
-      console.error("Error adding email: ", error);
-    }
-  };
-
-  const handleDeleteEmail = async (emailToDelete) => {
-    if (emailToDelete === placeholderEmail) {
-      alert("このメールアドレスは削除できません。");
-      return;
-    }
-
-    try {
-      const emailQuery = query(collection(db, "allowedEmails"), where("email", "==", emailToDelete));
-      const querySnapshot = await getDocs(emailQuery);
-
-      querySnapshot.forEach(async (docSnapshot) => {
-        await deleteDoc(doc(db, "allowedEmails", docSnapshot.id));
-      });
-    } catch (error) {
-      console.error("Error deleting email: ", error);
-    }
-  };
-
   return (
     <Router>
       <div>
-        {/* Fixed Top Navigation Bar */}
+        {/* Navigation Bar */}
         <div className="navbar">
           <div className="nav-links">
-            <Link to="/">管理ページ</Link>
-            <Link to="/vote">投票ページ</Link>
-            <Link to="/candidate-application">候補者申請</Link>
-            <Link to="/admin-approval">管理者承認</Link>
+            <Link to="/">ホームページ</Link>
+            <Link to="/news">ニュース</Link>
+            <Link to="/survey">アンケート</Link>
+            <Link to="/portal">選挙ポータル</Link>
+            <Link to="/contact">お問い合わせ</Link>
+            {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
           </div>
           <div>
             {user ? (
@@ -113,53 +88,16 @@ function App() {
           </div>
         </div>
 
-        <h1>生徒会選挙管理ページ</h1>
-
-        {user ? (
-          <div>
-            <p>こんにちは、 {user.displayName}</p>
-
-            <Routes>
-              <Route path="/" element={
-                isAuthorized ? (
-                  <>
-                    <AddCandidate />
-                    <CandidatesList />
-                    <div>
-                      <h3>他のユーザーにアクセス権を付与</h3> 
-                      <input 
-                        type="email" 
-                        value={newEmail} 
-                        onChange={(e) => setNewEmail(e.target.value)} 
-                        placeholder="ユーザーのメールアドレスを入力" 
-                      />
-                      <button onClick={handleAddEmail}>メールアドレスを追加</button>
-                    </div>
-
-                    <div>
-                      <h3>許可されたユーザーの削除</h3>
-                      <ul>
-                        {allowedEmails.map((email) => (
-                          <li key={email}>
-                            {email} 
-                            <button onClick={() => handleDeleteEmail(email)}>削除</button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                ) : (
-                  <p>このページにアクセスする権限がありません。</p>
-                )
-              } />
-              <Route path="/vote" element={<VotingPage />} />
-              <Route path="/candidate-application" element={<CandidateApplication />} />
-              <Route path="/admin-approval" element={<AdminApproval />} />
-            </Routes>
-          </div>
-        ) : (
-          <p>サインインしてこのページにアクセスしてください。</p>
-        )}
+        {/* Page Routes */}
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/news" element={<NewsPage />} />
+          <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/portal" element={<VotingPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
+          <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />
+        </Routes>
       </div>
     </Router>
   );
