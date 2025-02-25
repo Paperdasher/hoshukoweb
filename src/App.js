@@ -17,7 +17,6 @@ import CandidateApplication from './pages/election-portal/CandidateApplication';
 import AdminApproval from './pages/election-portal/AdminApproval';
 import CandidatesList from './pages/election-portal/CandidatesList';
 
-
 import './App.css';
 
 function App() {
@@ -75,7 +74,15 @@ function App() {
             <Link to="/">ホームページ</Link>
             <Link to="/news">ニュース</Link>
             <Link to="/survey">アンケート</Link>
-            <Link to="/portal">選挙ポータル</Link>
+            <div className="dropdown">
+              <Link to="/portal" className="dropbtn">選挙ポータル</Link>
+              <div className="dropdown-content">
+                <Link to="/portal/voting">投票ページ</Link>
+                <Link to="/portal/voting-management">投票管理ページ</Link>
+                <Link to="/portal/request-run">立候補ページ</Link>
+                <Link to="/portal/request-viewing">立候補者閲覧ページ</Link>
+              </div>
+            </div>
             <Link to="/contact">お問い合わせ</Link>
             {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
           </div>
@@ -94,6 +101,10 @@ function App() {
           <Route path="/news" element={<NewsPage />} />
           <Route path="/survey" element={<SurveyPage />} />
           <Route path="/portal" element={<VotingPage />} />
+          <Route path="/portal/voting" element={<Voting />} />
+          <Route path="/portal/voting-management" element={<AdminApproval />} />
+          <Route path="/portal/request-run" element={<CandidateApplication />} />
+          <Route path="/portal/request-viewing" element={<CandidatesList />} />
           <Route path="/contact" element={<ContactPage />} />
           {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
           <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />

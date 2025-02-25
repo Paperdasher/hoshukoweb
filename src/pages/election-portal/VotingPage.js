@@ -73,7 +73,7 @@ const VotingPage = () => {
             <ul>
               {candidates[position].map((candidate) => (
                 <li key={candidate.id}>
-                  {candidate.name} ({candidate.grade}年)
+                  {candidate.name} ({candidate.grade})
                   {candidates[position].length === POSITIONS[position] ? (
                     // 信任投票 (Approve/Disapprove)
                     <select onChange={(e) => handleVoteChange(position, candidate.id, e.target.value)}>

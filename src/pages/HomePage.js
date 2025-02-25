@@ -3,8 +3,8 @@ import React from 'react';
 function HomePage() {
   return (
     <div>
-      <h1>Welcome to the Student Election Website</h1>
-      <p>This website provides information about student elections, news, and surveys.</p>
+      <h1>LI校生徒ウェブサイトへようこそ！</h1>
+      <p>生徒会中心にLI校の情報を発信します。</p>
     </div>
   );
 }

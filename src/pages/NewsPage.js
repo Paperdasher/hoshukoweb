@@ -3,8 +3,8 @@ import React from 'react';
 function NewsPage() {
   return (
     <div>
-      <h1>Student Election News</h1>
-      <p>Stay updated with the latest election news!</p>
+      <h1>補習校ニュース</h1>
+      <p>補習校で起こっているイベントについて</p>
     </div>
   );
 }
