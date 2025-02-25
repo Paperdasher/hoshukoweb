@@ -86,7 +86,7 @@ const VotingPage = () => {
                     <select onChange={(e) => handleVoteChange(position, candidate.id, e.target.value)}>
                       <option value="">順位を選択</option>
                       {[...Array(candidates[position].length)].map((_, i) => (
-                        <option key={i} value={i + 1}>{i + 1}位</option>
+                        <option key={i} value={i + 1}>{i + 1}</option>
                       ))}
                     </select>
                   )}

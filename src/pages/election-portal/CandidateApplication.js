@@ -41,17 +41,22 @@ function CandidateApplication() {
       <h2>候補者申請</h2>
       <form onSubmit={handleSubmit}>
         <label>
-          名前:
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+          名前（ふりがな）：
+          <textarea 
+          type="text" 
+          placeholder="例:山田太郎（やまだ　たろう）"
+          value={name}
+          onChange={(e) => setName(e.target.value)} 
+          />
         </label>
         <br />
         <label>
-          理由:
+          なぜ立候補したいか・役職に適しているか：
           <textarea value={reason} onChange={(e) => setReason(e.target.value)} required />
         </label>
         <br />
         <label>
-          役職:
+          役職：
           <select value={position} onChange={(e) => setPosition(e.target.value)} required>
             <option value="">選択してください</option>
             <option value="会長">会長</option>
@@ -62,7 +67,7 @@ function CandidateApplication() {
         </label>
         <br />
         <label>
-          学年:
+          学年：
           <select value={grade} onChange={(e) => setGrade(e.target.value)} required>
             <option value="">選択してください</option>
             <option value="中1">中1</option>
