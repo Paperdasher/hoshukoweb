@@ -12,6 +12,8 @@ import StudentGovernmentPortal from './pages/StudentGovernmentPortal';
 import ManagementPortal from './pages/management/ManagementPortal';
 import AdminApproval from './pages/management/AdminApproval';
 import CandidatesList from './pages/management/CandidatesList';
+import ManagePermissions from './pages/management/ManagePermissions';
+
 
 import VotingPage from './pages/election-portal/VotingPage';
 import CandidateApplication from './pages/election-portal/CandidateApplication';
@@ -76,23 +78,26 @@ function App() {
             <div className="dropdown">
               <Link to="/portal" className="dropbtn">選挙ポータル</Link>
               <div className="dropdown-content">
-                <Link to="/portal/voting-page">投票ページ</Link>
-                <Link to="/portal/request-run">立候補ページ</Link>
+                <Link to="/portal/voting-page">投票</Link>
+                <Link to="/portal/request-run">立候補申し出</Link>
               </div>
             </div>
 
-            {/* New Management Portal Dropdown (Only for Authorized Users) */}
+            {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
+
+            {/* Add "Permissions" link to Management Portal dropdown */}
             {isAuthorized && (
               <div className="dropdown">
                 <Link to="/management" className="dropbtn">管理ポータル</Link>
                 <div className="dropdown-content">
-                  <Link to="/management/election">選挙管理</Link>
-                  <Link to="/management/request">立候補申請管理</Link>
+                  <Link to="/management/election">選挙</Link>
+                  <Link to="/management/request">立候補申請</Link>
+                  <Link to="/management/permissions">ユーザー権限</Link> 
                 </div>
               </div>
             )}
 
-            {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
+
             <Link to="/contact">お問い合わせ</Link>
 
           </div>
@@ -120,6 +125,8 @@ function App() {
           {isAuthorized && <Route path="/management" element={<ManagementPortal />} />}
           {isAuthorized && <Route path="/management/election" element={<CandidatesList />} />}
           {isAuthorized && <Route path="/management/request" element={<AdminApproval />} />}
+          {isAuthorized && <Route path="/management/permissions" element={<ManagePermissions />} />}
+
           
           {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
           <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />
