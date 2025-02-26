@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { auth, provider, db } from './firebase'; 
-import { collection, onSnapshot } from 'firebase/firestore';
+import { auth, provider, db } from './firebase'; // Make sure firebase.js is in the src folder
+import { collection, doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 
 import HomePage from './pages/HomePage';
 import NewsPage from './pages/NewsPage';
@@ -13,7 +13,9 @@ import ManagementPortal from './pages/management/ManagementPortal';
 import AdminApproval from './pages/management/AdminApproval';
 import CandidatesList from './pages/management/CandidatesList';
 import ManagePermissions from './pages/management/ManagePermissions';
-
+import StudentRoster from './pages/management/StudentRoster'; // Updated import to match correct filename
+import Profile from './pages/Profile';
+import CreateAccount from './pages/CreateAccount';
 
 import VotingPage from './pages/election-portal/VotingPage';
 import CandidateApplication from './pages/election-portal/CandidateApplication';
@@ -21,15 +23,16 @@ import CandidateApplication from './pages/election-portal/CandidateApplication';
 import './App.css';
 
 function App() {
-  const placeholderEmail = 'seanyuto@gmail.com';  // Declare placeholderEmail before using it
+  const placeholderEmail = 'seanyuto@gmail.com';
   const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [allowedEmails, setAllowedEmails] = useState([placeholderEmail]); // Initialize with placeholder email
+  const [allowedEmails, setAllowedEmails] = useState([placeholderEmail]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "allowedEmails"), (snapshot) => {
       const emails = snapshot.docs.map(doc => doc.data().email);
-      setAllowedEmails(prevEmails => [...prevEmails, ...emails]); // Add fetched emails to allowed list
+      setAllowedEmails(prevEmails => [...prevEmails, ...emails]);
     });
 
     return () => unsubscribe();
@@ -38,6 +41,7 @@ function App() {
   useEffect(() => {
     if (user) {
       checkAuthorization(user.email);
+      fetchUserInfo(user.email);
     }
   }, [user, allowedEmails]);
 
@@ -45,10 +49,38 @@ function App() {
     setIsAuthorized(allowedEmails.includes(email));
   };
 
+  const fetchUserInfo = async (email) => {
+    const userDoc = await getDoc(doc(db, "students", email));
+    if (userDoc.exists()) {
+      setUserInfo(userDoc.data());
+    } else {
+      setUserInfo(null);
+    }
+  };
+
   const signIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      setUser(result.user);
+      const signedInUser = result.user;
+      setUser(signedInUser);
+      checkAuthorization(signedInUser.email);
+      
+      // Check if user info exists, otherwise prompt to complete profile
+      const userDoc = await getDoc(doc(db, "students", signedInUser.email));
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, "students", signedInUser.email), {
+          email: signedInUser.email,
+          nameJapanese: "",
+          furigana: "",
+          nameEnglishLast: "",
+          nameEnglishFirst: "",
+          grade: "",
+          studentGovPosition: "",
+        });
+        setUserInfo(null);
+      } else {
+        setUserInfo(userDoc.data());
+      }
     } catch (error) {
       console.log("サインインエラー:", error);
     }
@@ -58,6 +90,7 @@ function App() {
     try {
       await signOut(auth);
       setUser(null);
+      setUserInfo(null);
       setIsAuthorized(false);
     } catch (error) {
       console.log("ログアウトエラー:", error);
@@ -85,26 +118,32 @@ function App() {
 
             {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
 
-            {/* Add "Permissions" link to Management Portal dropdown */}
+            {/* Management Portal Dropdown */}
             {isAuthorized && (
               <div className="dropdown">
                 <Link to="/management" className="dropbtn">管理ポータル</Link>
                 <div className="dropdown-content">
                   <Link to="/management/election">選挙</Link>
                   <Link to="/management/request">立候補申請</Link>
-                  <Link to="/management/permissions">ユーザー権限</Link> 
+                  <Link to="/management/permissions">ユーザー権限</Link>
+                  <Link to="/management/roster">生徒名簿</Link> 
                 </div>
               </div>
             )}
 
-
             <Link to="/contact">お問い合わせ</Link>
-
           </div>
 
-          <div>
+          {/* User Dropdown or Sign-in Button */}
+          <div className="auth-section">
             {user ? (
-              <button className="auth-button" onClick={logOut}>ログアウト</button>
+              <div className="user-dropdown">
+                <button className="dropbtn">ようこそ, {userInfo?.nameJapanese || user.email}</button>
+                <div className="dropdown-content">
+                  <Link to="/profile">プロフィール</Link>
+                  <button onClick={logOut}>ログアウト</button>
+                </div>
+              </div>
             ) : (
               <button className="auth-button" onClick={signIn}>Googleでサインイン</button>
             )}
@@ -126,17 +165,21 @@ function App() {
           {isAuthorized && <Route path="/management/election" element={<CandidatesList />} />}
           {isAuthorized && <Route path="/management/request" element={<AdminApproval />} />}
           {isAuthorized && <Route path="/management/permissions" element={<ManagePermissions />} />}
+          {isAuthorized && <Route path="/management/roster" element={<StudentRoster />} />}
 
-          
           {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
+          
+          {/* Profile Page */}
+          <Route path="/profile" element={<Profile />} />
+          
+          {/* Create Account Page (Only Show If User Info Is Missing) */}
+          {user && !userInfo && <Route path="*" element={<CreateAccount />} />}
+
           <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />
         </Routes>
       </div>
     </Router>
   );
 }
-
-
-
 
 export default App;
