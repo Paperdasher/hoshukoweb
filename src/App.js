@@ -102,34 +102,37 @@ function App() {
       <div>
         {/* Navigation Bar */}
         <div className="navbar">
-          <div className="nav-links">
-            <Link to="/">ホームページ</Link>
-            <Link to="/news">ニュース</Link>
-            <Link to="/survey">アンケート</Link>
+        <div className="nav-links">
+          {/* Replaced "ホームページ" with the logo image */}
+          <Link to="/" className="logo-link">
+            <img src="/../logonew.png" alt="Logo" className="logo-image" />
+          </Link>
+          <Link to="/news">ニュース</Link>
+          <Link to="/survey">アンケート</Link>
 
-            {/* Election Portal Dropdown */}
+          {/* Election Portal Dropdown */}
+          <div className="dropdown">
+            <Link to="/portal" className="dropbtn">選挙ポータル</Link>
+            <div className="dropdown-content">
+              <Link to="/portal/voting-page">投票</Link>
+              <Link to="/portal/request-run">立候補申し出</Link>
+            </div>
+          </div>
+
+          {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
+
+          {/* Management Portal Dropdown */}
+          {isAuthorized && (
             <div className="dropdown">
-              <Link to="/portal" className="dropbtn">選挙ポータル</Link>
+              <Link to="/management" className="dropbtn">管理ポータル</Link>
               <div className="dropdown-content">
-                <Link to="/portal/voting-page">投票</Link>
-                <Link to="/portal/request-run">立候補申し出</Link>
+                <Link to="/management/election">選挙</Link>
+                <Link to="/management/request">立候補申請</Link>
+                <Link to="/management/permissions">ユーザー権限</Link>
+                <Link to="/management/roster">生徒名簿</Link>
               </div>
             </div>
-
-            {isAuthorized && <Link to="/student-gov-portal">生徒会ポータル</Link>}
-
-            {/* Management Portal Dropdown */}
-            {isAuthorized && (
-              <div className="dropdown">
-                <Link to="/management" className="dropbtn">管理ポータル</Link>
-                <div className="dropdown-content">
-                  <Link to="/management/election">選挙</Link>
-                  <Link to="/management/request">立候補申請</Link>
-                  <Link to="/management/permissions">ユーザー権限</Link>
-                  <Link to="/management/roster">生徒名簿</Link> 
-                </div>
-              </div>
-            )}
+          )}
 
             <Link to="/contact">お問い合わせ</Link>
           </div>
@@ -149,6 +152,7 @@ function App() {
             )}
           </div>
         </div>
+
 
         {/* Page Routes */}
         <Routes>

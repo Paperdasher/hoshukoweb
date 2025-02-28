@@ -78,32 +78,50 @@ h1 {
 .navbar {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; /* Centers the content vertically */
   background-color: #0077cc; /* Consistent with the navbar color */
-  padding: 10px 20px;
+  padding: 15px 20px; /* Increase padding for a larger navbar */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 50px;
+  height: 40px; /* Increase the height of the navbar */
   z-index: 1000;
 }
 
 /* Left-side Navigation Links */
+/* Left-side Navigation Links */
 .nav-links {
   display: flex;
   gap: 20px;
+  align-items: center; /* Ensures the links are vertically centered */
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
   font-weight: bold;
+  font-size: 16px; /* Increased font size */
   transition: 0.3s ease;
 }
 
 .nav-links a:hover {
   text-decoration: underline;
+}
+
+
+/* Logo link */
+.logo-link {
+  display: inline-block;
+  padding-right: 20px; /* Space after the logo */
+  height: 100%;
+  display: flex;
+  align-items: center; /* Ensures the logo is vertically centered */
+}
+
+.logo-image {
+  height: 60px; /* Adjust logo size to fit with the larger navbar */
+  width: auto; /* Maintain aspect ratio */
 }
 
 /* Dropdown styles */
@@ -164,7 +182,7 @@ h1 {
   background-color: transparent;
   color: white;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 22px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -241,6 +259,7 @@ body {
   padding: 8px 15px;
   border-radius: 5px;
   font-weight: bold;
+  font-size: 16px;
   cursor: pointer;
   transition: 0.3s ease;
   margin-right: 40px; 
@@ -250,6 +269,10 @@ body {
   background-color: #0077cc;
   color: white;
 }
+
+
+
+
 
 
 /* Adjust body to prevent content from hiding under navbar */
