@@ -20,6 +20,7 @@ import CreateAccount from './pages/CreateAccount';
 import VotingPage from './pages/election-portal/VotingPage';
 import CandidateApplication from './pages/election-portal/CandidateApplication';
 
+
 import './App.css';
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
   const [userInfo, setUserInfo] = useState(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [allowedEmails, setAllowedEmails] = useState([placeholderEmail]);
+  const logo = window.location.origin + "/logonew.png"; 
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "allowedEmails"), (snapshot) => {
@@ -105,7 +107,7 @@ function App() {
         <div className="nav-links">
           {/* Replaced "ホームページ" with the logo image */}
           <Link to="/" className="logo-link">
-            <img src="/../logonew.png" alt="Logo" className="logo-image" />
+            <img src= {logo} alt="Logo" className="logo-image" />
           </Link>
           <Link to="/news">ニュース</Link>
           <Link to="/survey">アンケート</Link>

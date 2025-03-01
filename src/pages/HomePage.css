@@ -1,0 +1,39 @@
+/* Homepage container */
+.homepage-container {
+  text-align: center;
+  padding: 20px;
+}
+
+/* Image Slider */
+.slider {
+  width: 100%;
+  max-width: 1500px; /* Limits the width for larger screens */
+  height: 550px; /* Adjust height as needed */
+  margin: 0 auto; /* Centers the slider */
+  overflow: hidden;
+  position: relative;
+  border-radius: 10px; /* Optional rounded corners */
+}
+
+/* Slide Image */
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Homepage Title */
+.homepage-title {
+  font-size: 2.5rem;
+  margin-top: 20px;
+  color: #333;
+}
+
+/* Homepage Description */
+.homepage-description {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 700px;
+  margin: 10px auto;
+}
