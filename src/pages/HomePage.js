@@ -41,7 +41,7 @@ function HomePage() {
       </div>
 
       {/* Website Title and Description */}
-      <h1 className="homepage-title">LInxGov</h1>
+      <h1 className="homepage-title">SeitoLInx</h1>
       <p className="homepage-description">
         LI校生徒ウェブサイトへようこそ！生徒会中心にLI校の情報を発信します。
       </p>
