@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { auth, db } from "../firebase"; // Import Firebase config
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom"; // Import navigate
 
 const CreateAccount = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ const CreateAccount = () => {
   });
 
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,12 +35,9 @@ const CreateAccount = () => {
     }
 
     try {
-      // Create user in Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, "temporaryPassword");
-      const user = userCredential.user;
-
-      // Store user info in Firestore
-      const userRef = doc(collection(db, "students"), user.uid);
+      // Store user info in Firestore (without re-creating the authentication user)
+      const user = auth.currentUser; // Use the logged-in user
+      const userRef = doc(db, "students", user.email); // Use the email for Firestore document reference
       await setDoc(userRef, {
         japaneseName: formData.japaneseName,
         furigana: formData.furigana,
@@ -50,7 +48,8 @@ const CreateAccount = () => {
         studentGovPosition: formData.studentGovPosition || null,
       });
 
-      alert("アカウントが作成されました。ログインしてください。");
+      alert("アカウントが作成されました。");
+      navigate("/"); // Redirect to homepage or dashboard after successful profile creation
     } catch (err) {
       console.error("アカウント作成エラー:", err);
       setError("アカウントの作成に失敗しました。");
@@ -73,12 +72,12 @@ const CreateAccount = () => {
         </label>
 
         <label>
-          姓 (Last Name in English):
+          LAST NAME IN ENGLISH(ex. Takahashi):
           <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
         </label>
 
         <label>
-          名 (First Name in English):
+          FIRST NAME IN ENGLISH(ex. Yuto):
           <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
         </label>
 
@@ -86,12 +85,11 @@ const CreateAccount = () => {
           学年 (Grade):
           <select name="grade" value={formData.grade} onChange={handleChange} required>
             <option value="">選択してください</option>
-            <option value="1">1年生</option>
-            <option value="2">2年生</option>
-            <option value="3">3年生</option>
-            <option value="4">4年生</option>
-            <option value="5">5年生</option>
-            <option value="6">6年生</option>
+            <option value="1">中1</option>
+            <option value="2">中2</option>
+            <option value="3">中3</option>
+            <option value="4">高1</option>
+            <option value="5">高2</option>
           </select>
         </label>
 

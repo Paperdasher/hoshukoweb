@@ -11,7 +11,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (auth.currentUser) {
-        const docRef = doc(db, 'students', auth.currentUser.uid);
+        const docRef = doc(db, 'students', auth.currentUser.email); // Use email to fetch user data
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserData(docSnap.data());
@@ -33,10 +33,10 @@ const Profile = () => {
         <div>
           <p><strong>Japanese Name:</strong> {userData.japaneseName}</p>
           <p><strong>Furigana:</strong> {userData.furigana}</p>
-          <p><strong>English Name:</strong> {userData.englishLastName}, {userData.englishFirstName}</p>
+          <p><strong>English Name:</strong> {userData.lastName}, {userData.firstName}</p> {/* Fixed field names */}
           <p><strong>Grade:</strong> {userData.grade}</p>
           <p><strong>Email:</strong> {userData.email}</p>
-          <p><strong>Student Gov Position:</strong> {userData.studentGov || 'None'}</p>
+          <p><strong>Student Gov Position:</strong> {userData.studentGovPosition || 'None'}</p>
         </div>
       ) : (
         <p>Loading...</p>

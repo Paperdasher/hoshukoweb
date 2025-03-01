@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // Use Link to navigate to WriteNewsPage
 import { db, auth } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import './NewsPage.css';
 
 function NewsPage() {
   const [canPostNews, setCanPostNews] = useState(false);
@@ -25,7 +26,7 @@ function NewsPage() {
   return (
     <div>
       <h1>補習校ニュース</h1>
-      <p>補習校で起こっているイベントについて</p>
+      <p>補習校で起こっているイベントについてもっと知ろう！</p>
 
       {/* Display the "Write News" button only if the user has permission */}
       {canPostNews && (

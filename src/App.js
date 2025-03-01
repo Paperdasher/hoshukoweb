@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';  // Import useNavigate
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { auth, provider, db } from './firebase'; // Make sure firebase.js is in the src folder
+import { auth, provider, db } from './firebase';
 import { collection, doc, getDoc, onSnapshot, setDoc } from 'firebase/firestore';
 
 import HomePage from './pages/HomePage';
@@ -13,13 +13,12 @@ import ManagementPortal from './pages/management/ManagementPortal';
 import AdminApproval from './pages/management/AdminApproval';
 import CandidatesList from './pages/management/CandidatesList';
 import ManagePermissions from './pages/management/ManagePermissions';
-import StudentRoster from './pages/management/StudentRoster'; // Updated import to match correct filename
+import StudentRoster from './pages/management/StudentRoster';
 import Profile from './pages/Profile';
 import CreateAccount from './pages/CreateAccount';
 
 import VotingPage from './pages/election-portal/VotingPage';
 import CandidateApplication from './pages/election-portal/CandidateApplication';
-
 
 import './App.css';
 
@@ -29,7 +28,8 @@ function App() {
   const [userInfo, setUserInfo] = useState(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [allowedEmails, setAllowedEmails] = useState([placeholderEmail]);
-  const logo = window.location.origin + "/logonew.png"; 
+  const logo = window.location.origin + "/logonew.png";
+  const navigate = useNavigate();  // Using useNavigate inside the component
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "allowedEmails"), (snapshot) => {
@@ -56,7 +56,7 @@ function App() {
     if (userDoc.exists()) {
       setUserInfo(userDoc.data());
     } else {
-      setUserInfo(null);
+      setUserInfo(null); // This will prompt the user to fill out their profile
     }
   };
 
@@ -67,7 +67,6 @@ function App() {
       setUser(signedInUser);
       checkAuthorization(signedInUser.email);
       
-      // Check if user info exists, otherwise prompt to complete profile
       const userDoc = await getDoc(doc(db, "students", signedInUser.email));
       if (!userDoc.exists()) {
         await setDoc(doc(db, "students", signedInUser.email), {
@@ -79,7 +78,8 @@ function App() {
           grade: "",
           studentGovPosition: "",
         });
-        setUserInfo(null);
+        setUserInfo(null);  // Set user info to null so they are redirected to CreateAccount
+        navigate('/create-account');  // Now this should work properly inside the component
       } else {
         setUserInfo(userDoc.data());
       }
@@ -94,20 +94,19 @@ function App() {
       setUser(null);
       setUserInfo(null);
       setIsAuthorized(false);
+      navigate('/');  // Redirect to home after logout
     } catch (error) {
       console.log("ログアウトエラー:", error);
     }
   };
 
   return (
-    <Router>
-      <div>
-        {/* Navigation Bar */}
-        <div className="navbar">
+    <div>
+      {/* Navigation Bar */}
+      <div className="navbar">
         <div className="nav-links">
-          {/* Replaced "ホームページ" with the logo image */}
           <Link to="/" className="logo-link">
-            <img src= {logo} alt="Logo" className="logo-image" />
+            <img src={logo} alt="Logo" className="logo-image" />
           </Link>
           <Link to="/news">ニュース</Link>
           <Link to="/survey">アンケート</Link>
@@ -136,55 +135,53 @@ function App() {
             </div>
           )}
 
-            <Link to="/contact">お問い合わせ</Link>
-          </div>
-
-          {/* User Dropdown or Sign-in Button */}
-          <div className="auth-section">
-            {user ? (
-              <div className="user-dropdown">
-                <button className="dropbtn">ようこそ, {userInfo?.nameJapanese || user.email}</button>
-                <div className="dropdown-content">
-                  <Link to="/profile">プロフィール</Link>
-                  <button onClick={logOut}>ログアウト</button>
-                </div>
-              </div>
-            ) : (
-              <button className="auth-button" onClick={signIn}>Googleでサインイン</button>
-            )}
-          </div>
+          <Link to="/contact">お問い合わせ</Link>
         </div>
 
-
-        {/* Page Routes */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/news" element={<NewsPage />} />
-          <Route path="/survey" element={<SurveyPage />} />
-          <Route path="/portal" element={<VotingPage />} />
-          <Route path="/portal/voting-page" element={<VotingPage />} />
-          <Route path="/portal/request-run" element={<CandidateApplication />} />
-          <Route path="/contact" element={<ContactPage />} />
-
-          {/* Management Portal Routes */}
-          {isAuthorized && <Route path="/management" element={<ManagementPortal />} />}
-          {isAuthorized && <Route path="/management/election" element={<CandidatesList />} />}
-          {isAuthorized && <Route path="/management/request" element={<AdminApproval />} />}
-          {isAuthorized && <Route path="/management/permissions" element={<ManagePermissions />} />}
-          {isAuthorized && <Route path="/management/roster" element={<StudentRoster />} />}
-
-          {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
-          
-          {/* Profile Page */}
-          <Route path="/profile" element={<Profile />} />
-          
-          {/* Create Account Page (Only Show If User Info Is Missing) */}
-          {user && !userInfo && <Route path="*" element={<CreateAccount />} />}
-
-          <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />
-        </Routes>
+        {/* User Dropdown or Sign-in Button */}
+        <div className="auth-section">
+          {user ? (
+            <div className="user-dropdown">
+              <button className="dropbtn">ようこそ, {userInfo?.nameJapanese || user.email}</button>
+              <div className="dropdown-content">
+                <Link to="/profile">プロフィール</Link>
+                <button onClick={logOut}>ログアウト</button>
+              </div>
+            </div>
+          ) : (
+            <button className="auth-button" onClick={signIn}>Googleでサインイン</button>
+          )}
+        </div>
       </div>
-    </Router>
+
+      {/* Page Routes */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/news" element={<NewsPage />} />
+        <Route path="/survey" element={<SurveyPage />} />
+        <Route path="/portal" element={<VotingPage />} />
+        <Route path="/portal/voting-page" element={<VotingPage />} />
+        <Route path="/portal/request-run" element={<CandidateApplication />} />
+        <Route path="/contact" element={<ContactPage />} />
+
+        {/* Management Portal Routes */}
+        {isAuthorized && <Route path="/management" element={<ManagementPortal />} />}
+        {isAuthorized && <Route path="/management/election" element={<CandidatesList />} />}
+        {isAuthorized && <Route path="/management/request" element={<AdminApproval />} />}
+        {isAuthorized && <Route path="/management/permissions" element={<ManagePermissions />} />}
+        {isAuthorized && <Route path="/management/roster" element={<StudentRoster />} />}
+
+        {isAuthorized && <Route path="/student-gov-portal" element={<StudentGovernmentPortal />} />}
+        
+        {/* Profile Page */}
+        <Route path="/profile" element={<Profile />} />
+        
+        {/* Create Account Page (Only Show If User Info Is Missing) */}
+        {user && !userInfo && <Route path="/create-account" element={<CreateAccount />} />}
+
+        <Route path="*" element={<h2>404 - ページが見つかりませんでした</h2>} />
+      </Routes>
+    </div>
   );
 }
 
